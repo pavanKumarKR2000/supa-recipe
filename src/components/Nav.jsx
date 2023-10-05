@@ -16,7 +16,7 @@ const Nav = () => {
           <Button
             className={twMerge(
               "flex items-center gap-x-2 rounded-md",
-              pathname === "/" && "bg-blue-300"
+              pathname === "/" && "bg-black text-white"
             )}
           >
             <p>Home</p>
@@ -25,9 +25,10 @@ const Nav = () => {
         </Link>
         <Link to="/create">
           <Button
-            className={`flex items-center gap-x-2 rounded-md ${
-              pathname === "/create" && "bg-blue-300"
-            }`}
+            className={twMerge(
+              "flex items-center gap-x-2 rounded-md",
+              pathname === "/create" && "bg-black text-white"
+            )}
           >
             <p>Create</p>
             <Plus size={18} />
