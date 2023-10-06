@@ -10,6 +10,15 @@ body {
   background-color: whitesmoke;
 }
 
+.text-gradient {
+  background: #326bcf;
+  background: -webkit-linear-gradient(to right, #326bcf 30%, #29cf61 100%);
+  background: -moz-linear-gradient(to right, #326bcf 30%, #29cf61 100%);
+  background: linear-gradient(to right, #326bcf 30%, #29cf61 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

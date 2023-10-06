@@ -4,6 +4,7 @@ import RecipeCard from "../components/RecipeCard";
 import supabase from "../config/supabaseConfig";
 import Loading from "../components/Loading";
 import { twMerge } from "tailwind-merge";
+import Pagination from "../components/Pagination";
 
 const Home = () => {
   const [fetchError, setFetchError] = useState(null);
@@ -11,10 +12,20 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [orderBy, setOrderBy] = useState("created_at");
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     const fetchRecipes = async () => {
       setIsLoading(true);
+
+      const { error: countError, count } = await supabase
+        .from("recipes")
+        .select("*", { count: "exact", head: true });
+
+      if (!countError) {
+        setCount(count);
+      }
+
       const { data, error } = await supabase
         .from("recipes")
         .select()
@@ -35,12 +46,12 @@ const Home = () => {
 
   return (
     <div className="mt-6 space-y-4">
-      <div className="flex items-center pl-6 gap-x-4">
+      <div className="flex flex-col md:flex-row gap-y-2 md:gap-y-0 items-center md:pl-6 gap-x-4">
         <div className="flex items-center gap-x-2">
           <p>Order by</p>
           <ArrowDownUp size={18} />
         </div>
-        <div className="flex items-center gap-x-3">
+        <div className="flex items-center gap-x-3 justify-center md:justify-start">
           <div
             onClick={() => setOrderBy("created_at")}
             className={twMerge(
@@ -76,17 +87,21 @@ const Home = () => {
           <p>Couldnt fetch recepies</p>
         </p>
       )}
-      {!fetchError && (
-        <div className="grid grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 p-4">
-          {recipes?.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              setDeleted={setDeleted}
-            />
-          ))}
-        </div>
+      {!fetchError && !isLoading && (
+        <>
+          <div className="grid grid-cols-1  md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 p-4">
+            {recipes?.map((recipe) => (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                setDeleted={setDeleted}
+              />
+            ))}
+          </div>
+          <Pagination count={count} />
+        </>
       )}
+
       {isLoading && <Loading />}
     </div>
   );

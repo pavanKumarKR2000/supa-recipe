@@ -1,5 +1,5 @@
 import { Pencil, ShieldAlert, Star } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Button from "../components/Button";
@@ -10,11 +10,10 @@ const Update = () => {
   const [title, setTitle] = useState("");
   const [method, setMethod] = useState("");
   const [rating, setRating] = useState(-1);
+  const [ingredients, setIngredients] = useState("");
   const [showRatingError, setShowRatingError] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
-  const titleRef = useRef(null);
-  const methodRef = useRef(null);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -37,6 +36,7 @@ const Update = () => {
       } else {
         setIsLoading(false);
         setTitle(data.title);
+        setIngredients(data?.ingredients || "");
         setMethod(data.method);
         setRating(data.rating);
       }
@@ -60,12 +60,10 @@ const Update = () => {
     if (rating === -1) {
       setShowRatingError(true);
     } else {
-      setMethod(methodRef.current.value);
-      setTitle(titleRef.current.value);
       setRating(rating + 1);
       const { error } = await supabase
         .from("recipes")
-        .update([{ title, method, rating }])
+        .update([{ title, method, rating, ingredients }])
         .eq("id", id);
 
       if (error) {
@@ -75,6 +73,7 @@ const Update = () => {
 
         setTitle("");
         setMethod("");
+        setIngredients("");
         setRating(-1);
       }
     }
@@ -83,7 +82,7 @@ const Update = () => {
   return (
     <>
       {!isLoading ? (
-        <div className="h-[90vh] w-full flex items-center justify-center relative">
+        <div className="h-[120vh] md:h-[90vh] w-full flex items-center justify-center relative">
           <form
             onSubmit={handleSubmit}
             className="w-[95%] lg:w-[50%] xl:w-[35%] bg-white shadow-md flex flex-col gap-y-2 px-6 py-12 rounded-md"
@@ -95,19 +94,29 @@ const Update = () => {
               placeholder="Enter title"
               className="p-2 outline-none border border-gray-300 focus:border-black rounded-md"
               required
-              ref={titleRef}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <label htmlFor="method">Method</label>
+            <label htmlFor="ingridents">
+              Ingredients (Enter ingridents seperated by comma)
+            </label>
+            <input
+              id="ingredients"
+              type="text"
+              placeholder="Enter ingredients"
+              className="p-2 outline-none border border-gray-300 focus:border-black rounded-md"
+              required
+              onChange={(e) => setIngredients(e.target.value)}
+              value={ingredients}
+            />
+            <label htmlFor="method">Instructions</label>
             <textarea
               id="method"
               cols="30"
               rows="10"
-              placeholder="Enter method"
+              placeholder="Enter instructions"
               className="p-2 border border-gray-300 outline-none focus:border-black rounded-md"
               required
-              ref={methodRef}
               value={method}
               onChange={(e) => setMethod(e.target.value)}
             />

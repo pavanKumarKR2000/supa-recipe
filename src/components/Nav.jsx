@@ -1,15 +1,22 @@
 import { Link, useLocation } from "react-router-dom";
 import Button from "./Button";
-import { Home, Plus } from "lucide-react";
+import { Home, Plus, UtensilsCrossed } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
 const Nav = () => {
   const { pathname } = useLocation();
 
   return (
-    <nav className="flex items-center gap-x-20 w-full p-2">
-      <Link to="/">
-        <h1 className="text-4xl font-bold">supa recipe</h1>
+    <nav className="flex items-center justify-center md:justify-start gap-x-4 md:gap-x-20 w-full p-3">
+      <Link to="/" className="flex items-center gap-x-3">
+        <h1 className="text-2xl md:text-4xl font-bold italic text-gradient">
+          supa recipe
+        </h1>
+        <UtensilsCrossed
+          size={25}
+          strokeWidth={3}
+          className="hidden md:block"
+        />
       </Link>
       <div className="flex items-center gap-x-3">
         <Link to="/">
