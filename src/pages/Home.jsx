@@ -1,18 +1,32 @@
 import { ArrowDownUp, ShieldAlert } from "lucide-react";
 import { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
+import Loading from "../components/Loading";
+import Pagination from "../components/Pagination";
 import RecipeCard from "../components/RecipeCard";
 import supabase from "../config/supabaseConfig";
-import Loading from "../components/Loading";
-import { twMerge } from "tailwind-merge";
-import Pagination from "../components/Pagination";
 
 const Home = () => {
+  const [itemsPerPage] = useState(10);
   const [fetchError, setFetchError] = useState(null);
   const [recipes, setRecipes] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [orderBy, setOrderBy] = useState("created_at");
   const [count, setCount] = useState(0);
+  const [page, setPage] = useState(0);
+
+  const [fromTo, setFromTo] = useState({
+    from: page * itemsPerPage,
+    to: page * itemsPerPage + itemsPerPage - 1,
+  });
+
+  useEffect(() => {
+    setFromTo({
+      from: page * itemsPerPage,
+      to: page * itemsPerPage + itemsPerPage - 1,
+    });
+  }, [page, itemsPerPage]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -29,7 +43,8 @@ const Home = () => {
       const { data, error } = await supabase
         .from("recipes")
         .select()
-        .order(orderBy, { ascending: false });
+        .order(orderBy, { ascending: false })
+        .range(fromTo.from, fromTo.to);
 
       if (error) {
         setFetchError(error);
@@ -42,7 +57,7 @@ const Home = () => {
     };
 
     fetchRecipes();
-  }, [deleted, orderBy]);
+  }, [deleted, orderBy, fromTo, page]);
 
   return (
     <div className="mt-6 space-y-4">
@@ -98,7 +113,14 @@ const Home = () => {
               />
             ))}
           </div>
-          <Pagination count={count} />
+          {count > itemsPerPage && (
+            <Pagination
+              count={count}
+              setPage={setPage}
+              page={page}
+              itemsPerPage={itemsPerPage}
+            />
+          )}
         </>
       )}
 
