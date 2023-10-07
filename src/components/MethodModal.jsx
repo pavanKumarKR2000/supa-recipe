@@ -12,7 +12,7 @@ const MethodModal = ({ method, ingredients = "", setShowMethodModal }) => {
       (item, index) => {
         arr.push(
           <div className="p-3 rounded-md bg-blue-50" key={index}>
-            {item}
+            {item.trim()}
           </div>
         );
       },
